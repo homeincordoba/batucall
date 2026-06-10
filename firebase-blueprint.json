@@ -1,0 +1,151 @@
+{
+  "entities": {
+    "Member": {
+      "title": "Member",
+      "description": "A registered batucada member",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "description": "Unique email address, used as identifier" },
+        "name": { "type": "string", "description": "Full name of the member" },
+        "role": { "type": "string", "description": "Role in the batucada" },
+        "instrument": { "type": "string", "description": "Instrument played" },
+        "password": { "type": "string", "description": "Access password for manual verification" }
+      },
+      "required": ["email", "name", "role", "password"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "A scheduled event such as rehearsal, class, or gig (bolo)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "subtype": { "type": "string" },
+        "rhythms": { "type": "array" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "address": { "type": "string" },
+        "desc": { "type": "string" },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" }
+      },
+      "required": ["id", "title", "type", "date", "time", "address", "desc"]
+    },
+    "Alert": {
+      "title": "Alert",
+      "description": "An announcement or urgent notice sent to members",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "text": { "type": "string" },
+        "date": { "type": "string" },
+        "eventLink": { "type": "string" },
+        "sender": { "type": "string" }
+      },
+      "required": ["id", "title", "text", "date", "sender"]
+    },
+    "Rsvp": {
+      "title": "Rsvp",
+      "description": "An attendance response to an event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "status": { "type": "string" },
+        "instrument": { "type": "string" },
+        "note": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "eventId", "userEmail", "status"]
+    },
+    "PrivateMessage": {
+      "title": "PrivateMessage",
+      "description": "A chat message posted to general group or private counterpart",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderEmail": { "type": "string" },
+        "senderName": { "type": "string" },
+        "receiverEmail": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "senderEmail", "senderName", "receiverEmail", "text", "timestamp"]
+    },
+    "InterMestresChat": {
+      "title": "InterMestresChat",
+      "description": "An inter-mestres chat message for peer batucada networking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "batucadaName": { "type": "string" },
+        "sender": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "batucadaName", "sender", "text", "timestamp"]
+    },
+    "SystemSetting": {
+      "title": "SystemSetting",
+      "description": "Global settings like student codes or customized parameters",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["id", "value"]
+    },
+    "Batucada": {
+      "title": "Batucada",
+      "description": "A registered batucada with its location and details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The unique name of the batucada, used as the ID" },
+        "name": { "type": "string", "description": "Name of the batucada" },
+        "poblacion": { "type": "string", "description": "Town or city" },
+        "provincia": { "type": "string", "description": "Province" },
+        "pais": { "type": "string", "description": "Country" },
+        "mestreEmail": { "type": "string", "description": "Email of the creator/organizer" },
+        "accessCode": { "type": "string", "description": "Access code for Alumnos" }
+      },
+      "required": ["id", "name", "poblacion", "provincia", "pais", "mestreEmail", "accessCode"]
+    }
+  },
+  "firestore": {
+    "/batucadas/{batucadaId}": {
+      "schema": "Batucada",
+      "description": "Collection of all registered batucadas"
+    },
+    "/members/{email}": {
+      "schema": "Member",
+      "description": "Collection of members indexed by their email addresses"
+    },
+    "/events/{eventId}": {
+      "schema": "Event",
+      "description": "Collection of gigs, rehearsals, and classes"
+    },
+    "/alerts/{alertId}": {
+      "schema": "Alert",
+      "description": "Collection of group alerts and notices"
+    },
+    "/rsvps/{rsvpId}": {
+      "schema": "Rsvp",
+      "description": "Collection of member RSVPs for events"
+    },
+    "/private-messages/{messageId}": {
+      "schema": "PrivateMessage",
+      "description": "Collection of private or group messages"
+    },
+    "/inter-messages/{messageId}": {
+      "schema": "InterMestresChat",
+      "description": "Collection of messages in the inter-mestre networking logs"
+    },
+    "/settings/{settingId}": {
+      "schema": "SystemSetting",
+      "description": "System configuration parameters"
+    }
+  }
+}

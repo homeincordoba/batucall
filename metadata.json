@@ -1,0 +1,6 @@
+{
+  "name": "BatuCall",
+  "description": "BatuCall - Plataforma interactiva premium para organizar ensayos, bolos, roles, videoteca y alertas de tu Batucada.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

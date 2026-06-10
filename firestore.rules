@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // === GLOBAL HELPER FUNCTIONS ===
+    
+    // Is current caller signed in with a valid Firebase account?
+    function isSignedIn() {
+      return request.auth != null && request.auth.token != null;
+    }
+
+    // Checking if the caller is the bootstrapped admin
+    function isAdmin() {
+      return isSignedIn() 
+        && request.auth.token.email != null 
+        && request.auth.token.email.lower() == 'homeincordoba@gmail.com';
+    }
+
+    // Checks if the caller is an Organizador by looking up their profile
+    function isOrganizador() {
+      return isAdmin() || (
+        isSignedIn() 
+        && exists(/databases/$(database)/documents/members/$(request.auth.token.email))
+        && get(/databases/$(database)/documents/members/$(request.auth.token.email)).data.role == 'Organizador'
+      );
+    }
+
+    // Is the authenticated user writing their own record?
+    function isSelf(email) {
+      return isSignedIn() 
+        && request.auth.token.email != null 
+        && request.auth.token.email.lower() == email.lower();
+    }
+
+    // === COLLECTION RULES ===
+
+    // Collection: batucadas
+    match /batucadas/{batucadaId} {
+      allow read: if true;
+      allow write: if true; // Allow anyone to register or read batucadas (critical for public signup/onboarding)
+    }
+
+    // Collection: members
+    match /members/{email} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && (isSelf(email) || isOrganizador());
+    }
+
+    // Collection: events
+    match /events/{eventId} {
+      allow read: if isSignedIn();
+      allow write: if isOrganizador();
+    }
+
+    // Collection: alerts
+    match /alerts/{alertId} {
+      allow read: if isSignedIn();
+      allow write: if isOrganizador();
+    }
+
+    // Collection: rsvps
+    match /rsvps/{rsvpId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn(); // Each user can RSVP for themselves
+    }
+
+    // Collection: private-messages
+    match /private-messages/{messageId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // Collection: inter-messages
+    match /inter-messages/{messageId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // Collection: settings
+    match /settings/{settingId} {
+      allow read: if isSignedIn();
+      allow write: if isOrganizador();
+    }
+  }
+}
